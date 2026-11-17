@@ -136,8 +136,11 @@ body.mw-shell {
 }
 
 /* ===== Карточка экрана ===== */
+/* Карточка и кнопки — значения по умолчанию: :where() обнуляет вес селектора,
+   поэтому собственные .screen / .btn тренажёра (ширина, отступы) всегда главнее.
+   Иначе, например, соробан сжимался до 720 px и показывал 8 спиц вместо 13. */
 
-.mw-shell .screen {
+:where(.mw-shell) .screen {
   width: 100%;
   max-width: 720px;
   box-sizing: border-box;
@@ -149,7 +152,7 @@ body.mw-shell {
 
 /* ===== Кнопки ===== */
 
-.mw-shell .btn {
+:where(.mw-shell) .btn {
   border: none;
   border-radius: var(--radius);
   padding: 12px 24px;
@@ -159,16 +162,16 @@ body.mw-shell {
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-.mw-shell .btn:hover { transform: translateY(-1px); }
-.mw-shell .btn--primary { background: var(--primary); color: #fff; }
-.mw-shell .btn--primary:hover { background: var(--primary-hover); }
-.mw-shell .btn--secondary {
+:where(.mw-shell) .btn:hover { transform: translateY(-1px); }
+:where(.mw-shell) .btn--primary { background: var(--primary); color: #fff; }
+:where(.mw-shell) .btn--primary:hover { background: var(--primary-hover); }
+:where(.mw-shell) .btn--secondary {
   background: transparent;
   color: var(--primary-hover);
   border: 2px solid var(--primary);
 }
-.mw-shell .btn--large { padding: 14px 32px; font-size: 1.1rem; }
-.mw-shell .btn--exit {
+:where(.mw-shell) .btn--large { padding: 14px 32px; font-size: 1.1rem; }
+:where(.mw-shell) .btn--exit {
   background: transparent;
   color: var(--text-secondary);
   border: 2px solid var(--border);
@@ -188,7 +191,7 @@ body.mw-shell {
   /* Отличие от эталона: во фрейме сайта высота на телефоне дорога, подзаголовок прячем */
   .mw-shell .app-header__tagline { display: none; }
   .mw-shell .language-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-  .mw-shell .screen { padding: 20px; }
+  :where(.mw-shell) .screen { padding: 20px; }
 }
 
 @media (max-width: 360px) {
