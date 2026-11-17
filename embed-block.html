@@ -1,0 +1,55 @@
+<!-- MindWorld: тренажёр во фрейме, высота по содержимому -->
+<div class="mw-trainer-embed" id="mw-embed-memorymatch-ua">
+  <iframe
+    src="https://mindworldschool.github.io/memory-match/?lang=ua"
+    title="Memory Match — онлайн-гра для тренування пам’яті"
+    loading="lazy"
+    allowfullscreen
+    referrerpolicy="origin"></iframe>
+</div>
+
+<style>
+.mw-trainer-embed {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  /* Пока тренажёр не сообщил свою высоту — на весь экран */
+  height: 100vh;
+  height: 100dvh;
+  background: #fdfcf5;
+  overflow: hidden;
+}
+.mw-trainer-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+</style>
+
+<script>
+(function () {
+  var wrap = document.getElementById('mw-embed-memorymatch-ua');
+  if (!wrap) return;
+  var frame = wrap.querySelector('iframe');
+  var base = 'https://mindworldschool.github.io/memory-match/';
+
+  // Язык: только при явном ?lang= в адресе страницы
+  var q = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+  if (['ua', 'en', 'ru', 'es'].indexOf(q) !== -1) frame.src = base + '?lang=' + q;
+
+  // Высота: тренажёр присылает высоту содержимого, фрейм подстраивается
+  var TRAINERS_ORIGIN = 'https://mindworldschool.github.io';
+  window.addEventListener('message', function (e) {
+    if (e.origin !== TRAINERS_ORIGIN || e.source !== frame.contentWindow) return;
+    var d = e.data;
+    if (!d || d.type !== 'mw-trainer:height') return;
+    var h = Math.round(Number(d.height));
+    if (!(h >= 300 && h <= 6000)) return;
+    wrap.style.height = h + 'px';
+  });
+})();
+</script>
