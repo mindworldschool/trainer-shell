@@ -199,11 +199,80 @@
     renderHeader(mount);
     applyLang();
     notify();
+    watchHeight();
     return api;
   }
 
+  // ===== Высота для фрейма на сайте =====
+  // Когда тренажёр открыт во фрейме, сообщаем странице высоту содержимого,
+  // чтобы фрейм был ровно по игре, без пустого места снизу.
+  // Страница сайта слушает сообщение 'mw-trainer:height' и меняет высоту фрейма.
+  // Если страница не слушает — ничего не происходит.
+  var HEIGHT_MSG = 'mw-trainer:height';
+  // Куда разрешено отправлять (postMessage с чужим targetOrigin браузер просто отбрасывает)
+  var SITE_ORIGINS = ['https://mindworldschool.com', 'https://www.mindworldschool.com'];
+  // Локальная разработка: тренажёр и тестовая страница на одном localhost
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) SITE_ORIGINS.push(location.origin);
+  var lastHeight = 0;
+  var heightQueued = false;
+
+  /** Высота содержимого: нижний край самого низкого видимого блока в <body> */
+  function contentHeight() {
+    var bottom = 0;
+    var children = document.body ? document.body.children : [];
+    for (var i = 0; i < children.length; i++) {
+      var node = children[i];
+      if (/^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(node.tagName)) continue;
+      var cs = getComputedStyle(node);
+      // Модальные окна, маскоты поверх и скрытые элементы высоту не задают
+      if (cs.display === 'none' || cs.position === 'fixed' || cs.position === 'absolute') continue;
+      var rect = node.getBoundingClientRect();
+      var b = rect.bottom + (parseFloat(cs.marginBottom) || 0);
+      if (b > bottom) bottom = b;
+    }
+    var pad = document.body ? parseFloat(getComputedStyle(document.body).paddingBottom) || 0 : 0;
+    return Math.ceil(bottom + pad + (window.pageYOffset || 0));
+  }
+
+  function postHeight() {
+    heightQueued = false;
+    var h = contentHeight();
+    if (!h || Math.abs(h - lastHeight) < 2) return;
+    lastHeight = h;
+    SITE_ORIGINS.forEach(function (origin) {
+      try { window.parent.postMessage({ type: HEIGHT_MSG, height: h }, origin); } catch (e) {}
+    });
+  }
+
+  function queueHeight() {
+    if (heightQueued) return;
+    heightQueued = true;
+    // setTimeout, а не requestAnimationFrame: rAF не срабатывает во фоновых вкладках
+    setTimeout(postHeight, 60);
+  }
+
+  function watchHeight() {
+    if (window.parent === window) return; // открыт не во фрейме
+    document.documentElement.classList.add('mw-in-frame');
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(queueHeight);
+      var observeChildren = function () {
+        for (var i = 0; i < document.body.children.length; i++) ro.observe(document.body.children[i]);
+      };
+      observeChildren();
+      // Экраны тренажёров показываются и прячутся — следим и за новыми блоками
+      if (window.MutationObserver) {
+        new MutationObserver(function () { observeChildren(); queueHeight(); })
+          .observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
+      }
+    }
+    window.addEventListener('load', queueHeight);
+    window.addEventListener('resize', queueHeight);
+    queueHeight();
+  }
+
   var api = {
-    version: '1.0.0',
+    version: '1.1.0',
     init: init,
     setLang: function (code) { setLang(code); },
     /** Текущий язык в кодировке тренажёра */
