@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trainer shell — MindWorld School</title>
+  <link rel="stylesheet" href="shell.v1.css">
+  <script src="shell.v1.js"></script>
+  <style>
+    main { display: flex; justify-content: center; padding: 2rem 1rem; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div id="mw-header"></div>
+  <main>
+    <section class="screen">
+      <h2 id="demoTitle"></h2>
+      <p id="demoText" style="color: var(--text-secondary)"></p>
+      <div class="row">
+        <button class="btn btn--primary">Primary</button>
+        <button class="btn btn--secondary">Secondary</button>
+        <button class="btn btn--primary btn--large">Large</button>
+        <button class="btn btn--exit">Exit</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Демо-страница оболочки: проверка шапки, языков и кнопок
+    var demo = {
+      uk: ['Оболонка тренажерів', 'Спільна шапка, шрифти, кольори та кнопки.'],
+      en: ['Trainer shell', 'Shared header, fonts, colours and buttons.'],
+      ru: ['Оболочка тренажёров', 'Общая шапка, шрифты, цвета и кнопки.'],
+      es: ['Plantilla de entrenadores', 'Encabezado, fuentes, colores y botones comunes.']
+    };
+    MWShell.init({
+      title: 'Trainer Shell',
+      tagline: { uk: 'Демо оболонки', en: 'Shell demo', ru: 'Демо оболочки', es: 'Demostración' },
+      docTitle: 'Trainer shell — MindWorld School',
+      onLangChange: function (lang) {
+        document.getElementById('demoTitle').textContent = demo[lang][0];
+        document.getElementById('demoText').textContent = demo[lang][1];
+      }
+    });
+  </script>
+</body>
+</html>

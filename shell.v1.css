@@ -1,0 +1,196 @@
+/**
+ * MindWorld — общая оболочка публичных тренажёров, версия 1.
+ * Значения сняты с визуального эталона (Schulte Table, кабинет).
+ *
+ * Правило версий: в v1 можно только добавлять и чинить без смены внешнего вида.
+ * Всё, что меняет вид или ломает совместимость, — новый файл shell.v2.css.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Montserrat:wght@400;600;700&display=swap");
+
+:root {
+  --primary: #ff7c00;
+  --primary-hover: #e06600;
+  --success: #4caf50;
+  --error: #f44336;
+  --text-primary: #2c3e50;
+  --text-secondary: #7d733a;
+  --bg-light: #fdfcf5;
+  --bg-white: #ffffff;
+  --border: #e0e0e0;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 12px 30px rgba(255, 124, 0, 0.15);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-main: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-title: "Baloo 2", "Montserrat", cursive;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body.mw-shell {
+  margin: 0;
+  font-family: var(--font-main);
+  color: var(--text-primary);
+  background: var(--bg-light);
+  min-height: 100vh;
+  /* Тренажёр живёт во фрейме: прокрутки вбок быть не должно */
+  overflow-x: hidden;
+}
+
+/* ===== Шапка ===== */
+
+.mw-shell .app-header {
+  background: var(--primary);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px var(--shadow);
+  font-family: var(--font-main);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.mw-shell .app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.mw-shell .app-header__logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.mw-shell .app-header__titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mw-shell .app-header__title {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--bg-white);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.mw-shell .app-header__tagline {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  margin: 0.25rem 0 0 0;
+}
+
+.mw-shell .app-header__languages {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50px;
+  padding: 4px;
+}
+
+.mw-shell .language-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-height: auto;
+  box-shadow: none;
+  margin: 0;
+}
+
+.mw-shell .language-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.mw-shell .language-btn--active,
+.mw-shell .language-btn--active:hover {
+  background: var(--bg-white);
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mw-shell .language-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ===== Карточка экрана ===== */
+
+.mw-shell .screen {
+  width: 100%;
+  max-width: 720px;
+  box-sizing: border-box;
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 32px;
+}
+
+/* ===== Кнопки ===== */
+
+.mw-shell .btn {
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.mw-shell .btn:hover { transform: translateY(-1px); }
+.mw-shell .btn--primary { background: var(--primary); color: #fff; }
+.mw-shell .btn--primary:hover { background: var(--primary-hover); }
+.mw-shell .btn--secondary {
+  background: transparent;
+  color: var(--primary-hover);
+  border: 2px solid var(--primary);
+}
+.mw-shell .btn--large { padding: 14px 32px; font-size: 1.1rem; }
+.mw-shell .btn--exit {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 2px solid var(--border);
+}
+
+/* ===== Телефон (брейкпоинт эталона — 600px) ===== */
+
+@media (max-width: 600px) {
+  .mw-shell .app-header {
+    padding: 0.6rem 1rem;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .mw-shell .app-header__logo { width: 40px; height: 40px; }
+  .mw-shell .app-header__brand { gap: 0.6rem; }
+  .mw-shell .app-header__title { font-size: 1.3rem; }
+  /* Отличие от эталона: во фрейме сайта высота на телефоне дорога, подзаголовок прячем */
+  .mw-shell .app-header__tagline { display: none; }
+  .mw-shell .language-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+  .mw-shell .screen { padding: 20px; }
+}
+
+@media (max-width: 360px) {
+  .mw-shell .language-btn { padding: 0.35rem 0.6rem; }
+}
