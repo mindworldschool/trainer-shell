@@ -48,7 +48,7 @@
     var d = e.data;
     if (!d || d.type !== 'mw-trainer:height') return;
     var h = Math.round(Number(d.height));
-    if (!(h >= 300 && h <= 6000)) return;
+    if (!(h >= 150 && h <= 6000)) return;
     wrap.style.height = h + 'px';
   });
 })();
