@@ -46,9 +46,20 @@
   window.addEventListener('message', function (e) {
     if (e.origin !== TRAINERS_ORIGIN || e.source !== frame.contentWindow) return;
     var d = e.data;
-    if (!d || d.type !== 'mw-trainer:height') return;
+    if (!d) return;
+    // Тренажёр просит показать элемент (например, абакус) — прокручиваем страницу,
+    // только если он не виден целиком, и ставим его по центру экрана
+    if (d.type === 'mw-trainer:reveal') {
+      var fr = frame.getBoundingClientRect();
+      var top = fr.top + Number(d.top), hh = Number(d.height);
+      if (!(hh > 0) || (top >= 0 && top + hh <= window.innerHeight)) return;
+      var y = window.pageYOffset + top + hh / 2 - window.innerHeight / 2;
+      window.scrollTo({ top: Math.max(0, Math.round(y)), behavior: 'smooth' });
+      return;
+    }
+    if (d.type !== 'mw-trainer:height') return;
     var h = Math.round(Number(d.height));
-    if (!(h >= 300 && h <= 6000)) return;
+    if (!(h >= 150 && h <= 6000)) return;
     wrap.style.height = h + 'px';
   });
 })();
