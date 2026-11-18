@@ -271,15 +271,39 @@
     queueHeight();
   }
 
+  // ===== Показать элемент на экране =====
+  // Например, абакус перед показом числа: если он не виден целиком, его надо
+  // прокрутить в центр экрана. Во фрейме прокручивать может только страница сайта —
+  // отправляем ей 'mw-trainer:reveal' с положением элемента внутри тренажёра.
+  var REVEAL_MSG = 'mw-trainer:reveal';
+
+  function reveal(el) {
+    if (!el || !el.getBoundingClientRect) return;
+    var r = el.getBoundingClientRect();
+    if (window.parent === window) {
+      // Тренажёр открыт сам по себе — прокручиваем свою страницу
+      if (r.top < 0 || r.bottom > window.innerHeight) {
+        try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { el.scrollIntoView(); }
+      }
+      return;
+    }
+    var top = Math.round(r.top + (window.pageYOffset || 0));
+    var height = Math.round(r.height);
+    SITE_ORIGINS.forEach(function (origin) {
+      try { window.parent.postMessage({ type: REVEAL_MSG, top: top, height: height }, origin); } catch (e) {}
+    });
+  }
+
   var api = {
-    version: '1.1.0',
+    version: '1.2.0',
     init: init,
     setLang: function (code) { setLang(code); },
     /** Текущий язык в кодировке тренажёра */
     getLang: function () { return forTrainer(state.lang); },
     /** Текущий язык в стандарте (uk/en/ru/es) */
     getLangStd: function () { return state.lang; },
-    pick: function (value) { return pick(value, state.lang); }
+    pick: function (value) { return pick(value, state.lang); },
+    reveal: reveal
   };
 
   // Язык <html> ставим сразу, ещё до init, чтобы не мигал неверный lang
